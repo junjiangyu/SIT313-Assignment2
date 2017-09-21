@@ -166,7 +166,12 @@ var topics = [
 
 //this is the function to load up the login page for user to login
 function showLoginPage(){
+    document.getElementById('Lock').style.visibility = 'visible';
+    document.getElementById('loginButton').style.visibility = 'visible';
+    document.getElementById('registerButton').style.visibility = 'visible';
+
   //add new div named page, all element will be added inside
+
      var page = $("<div></div>");
      page.append("<h1 class = 'logintitle'>Login page</h1>");
      var username = $("<input type='text' id='loginusername'></input>");
@@ -341,27 +346,26 @@ var ro = $("<tr></tr>");
 }
 
 
-
 function Nexttopic(){
    var page = $("<div></div>");
    var PresentButton = $("<button class='button'>Submit</button>");
    page.append("<h1 class='logintitle'>BMW Disscussion Part</h1>");
    page.append(Table);
    var inputone = $("<br><input id='topic'><br>");
-  var inputtwo = $("<textarea id='content' rows='5' cols='40' style='resize:none'></textarea><br>");
+   var inputtwo = $("<textarea id='content' rows='5' cols='40' style='resize:none'></textarea><br>");
    page.append("<p class='bodyfont'>Enter Your Title here: </p>");
    page.append(inputone);
    page.append("<p class='bodyfont'>Enter Your content here: </p>");
    page.append(inputtwo);
    page.append(PresentButton);
-  $("#maincontent").html(page);
+   $("#maincontent").html(page);
 
-  Table.on("click",function(){
-  tableshowup();
-  });
+   Table.on("click",function(){
+   tableshowup();
+   });
 
 
- PresentButton.on("click",function(){
+   PresentButton.on("click",function(){
 
    var topicinput=document.getElementById("topic").value;
    var contentinput=document.getElementById("content").value;
@@ -430,10 +434,82 @@ function createsTopicOnclick(node,Studenttopics){
 });
 }
 
+function locktheapp(){
+   document.getElementById('Lock').style.visibility = 'hidden';
+   document.getElementById('loginButton').style.visibility = 'hidden';
+   document.getElementById('registerButton').style.visibility = 'hidden';
+
+
+   var page = $("<div></div>");
+   var passwordLine = $("<p class='bodyfont'><b>Give App a password: </b></p>");
+   var input = $("<input id='lockpassword' type='password'></input>");
+   var button1 = $("<button class='button'>Submit</button>");
+   page.append(passwordLine);
+   passwordLine.append(input);
+   page.append(button1);
+   $("#maincontent").html(page);
+
+   button1.on("click",function(){
+    var lockinput = document.getElementById('lockpassword').value;
+  if(lockinput==""){
+      alert("Cannot Input empty value!");
+  }
+  else {
+      localStorage.setItem('AppLockPassword',lockinput);
+      console.log(lockinput);
+      Unlock();
+  }
+   });
+
+}
+
+function Unlock(){
+
+  document.getElementById('Lock').style.visibility = 'hidden';
+  document.getElementById('loginButton').style.visibility = 'hidden';
+  document.getElementById('registerButton').style.visibility = 'hidden';
+  var page = $("<div></div>");
+  var passwordLine = $("<p class='bodyfont'><b>Use password to Unlock App: </b></p>");
+  var input = $("<input id='inputpassword' type='password'></input>");
+  var button2 = $("<button class='button'>Submit</button>");
+
+  page.append(passwordLine);
+  passwordLine.append(input);
+  page.append(button2);
+
+  button2.on("click",function(){
+   var lockinput1 = document.getElementById('inputpassword').value;
+   if (lockinput1==""){
+       alert("Cannot Input empty value!");
+   }
+   else {
+       var aValue = localStorage.getItem('AppLockPassword');
+       console.log(lockinput1);
+       var aValue = localStorage.getItem('AppLockPassword');
+       console.log(lockinput1);
+
+       if (lockinput1 == aValue){
+         alert("Correct!Welcome to John's Forum");
+         showLoginPage();
+       }else {
+          alert("Wrong password!Try Again!!");
+       }
+
+
+   }
+      });
+
+
+
+  $("#maincontent").html(page);
+
+}
+
+
 //web application load
 $( document ).ready(function() {
 $("#loginButton").on("click", showLoginPage);
 $("#registerButton").on("click", showRegisterPage);
-$("#MainPageButton").on("click", showLoginPage);
-showLoginPage();
+$("#Lock").on("click", Unlock);
+locktheapp();
 });

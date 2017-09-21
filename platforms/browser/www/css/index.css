@@ -1,0 +1,66 @@
+
+.title{
+  padding-left: 50%;
+  font-size: 50%;
+}
+
+.uppermenu{
+      position: absolute;
+      right: 10px;
+      top: 2px;
+}
+
+.topicsTable{
+    width: 300px;
+}
+
+.topicsTable tr{
+
+}
+
+.topicsTable tr:hover {
+background-color: rgba(127, 231, 255, 0.45);;
+cursor:pointer;
+}
+.topicsTable th{
+  font-size: 1.4rem;
+}
+
+.topicsTable td,.topicsTable th{
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 8px 16px;
+}
+
+
+.Table{
+    width: 300px;
+}
+
+.Table tr{
+
+}
+
+.Table th{
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.Table td{
+  width: 100px;
+  height: 50px;
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 8px 16px;
+}
+
+.button{
+  width: 70px;
+  height: 25px;
+}
+
+.content{
+  text-decoration:underline;
+  cursor:pointer;
+
+}

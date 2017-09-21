@@ -1,0 +1,91 @@
+
+.title{
+text-align:center;
+font-family:Forte,Helvetica,sans-serif;
+font-size: 50px;
+}
+
+
+
+.button{
+   background-color: #ffffff;
+font-family: "Impact", Times, serif;
+  -webkit-border-radius: 30px;
+-moz-border-radius: 30px;
+border-radius: 30px;
+
+-webkit-box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+-moz-box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+box-shadow: 1px 1px 1px rgba(0,0,0, .29), inset 1px 1px 1px rgba(255,255,255, .44);
+
+-webkit-transition: all 0.15s ease;
+-moz-transition: all 0.15s ease;
+-o-transition: all 0.15s ease;
+-ms-transition: all 0.15s ease;
+transition: all 0.15s ease;
+}
+.image{
+text-align: center;
+
+}
+
+.bodyfont{
+   font-weight: bold;
+   font-family: "Times New Roman", Times, serif;
+}
+
+
+.logintitle{
+ text-align:center;
+  font-family: "Impact", Times, serif;
+}
+
+.uppermenu{
+      position: absolute;
+      right: 10px;
+      top: 2px;
+}
+
+
+
+.topicsTable{
+    width: 300px;
+}
+
+.topicsTable tr{
+}
+
+.topicsTable tr:hover {
+background-color: rgba(127, 231, 255, 0.45);;
+cursor:pointer;
+}
+.topicsTable th{
+   font-weight: bold;
+  background-color:#d5ff05;
+  font-size: 1.4rem;
+  font-family: "Impact", Times, serif;
+}
+
+.topicsTable td{
+ font-weight: bold;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.topicsTable td,.topicsTable th{
+  border: 5px solid black;
+  border-collapse: collapse;
+  padding: 8px 16px;
+}
+
+
+
+
+.button{
+  width: 70px;
+  height: 25px;
+}
+
+.content{
+  text-decoration:underline;
+  cursor:pointer;
+}

@@ -28,6 +28,7 @@ app.initialize();
 window.baseUrl = "http://introtoapps.com/datastore.php?&appid=2150289066";
 window.currentUsername = null;
 window.forumTopics = [];
+window.forumTopics1 = [];
 window.userData=[];
 
 function checkLogin(){
@@ -37,15 +38,11 @@ function checkLogin(){
     var hashpasswordinput = CryptoJS.SHA256(passwordinput).toString();
     var userinput = usernameinput + hashpasswordinput;
     console.log(userinput);
-
-
         $.ajax({ url: url, cache: false })
             .done(function (data) {
                 try {
 
                     window.userData = JSON.parse(data);
-
-
                     // do the login fuction firstly retrieve all the data
                     for (var index = 0; index < userData.length; index++) {
                         var networkdata = userData[index];
@@ -131,7 +128,7 @@ function createUser(_username, _password) {
 }
 
 
-
+//insert the forum topic into database
 function createForum(_title, _content) {
     //the variable
 
@@ -157,6 +154,31 @@ function createForum(_title, _content) {
 
 }
 
+//insert the forum topic into database
+function createForum1(_title, _content) {
+    //the variable
+
+    var forumObject = {
+        title: _title,
+        content: _content,
+    }
+    console.log(forumObject);
+
+    forumTopics1.push(forumObject);
+    var data = JSON.stringify(forumTopics1);
+    //create url again for saving
+    var url = baseUrl + "&action=save&objectid=forumTopics1&data=" + encodeURIComponent(data);
+     $.ajax({ url: url, cache: false })
+                .done(function (data) {
+                    //when success, run this
+                    alert("Result from server:" + data);
+
+                }).fail(function (jqXHR, textStatus) {
+                    alert("Request failed: " + textStatus);
+                });
+
+}
+
 
 
 var topics = [
@@ -166,7 +188,12 @@ var topics = [
 
 //this is the function to load up the login page for user to login
 function showLoginPage(){
+    document.getElementById('Lock').style.visibility = 'visible';
+    document.getElementById('loginButton').style.visibility = 'visible';
+    document.getElementById('registerButton').style.visibility = 'visible';
+
   //add new div named page, all element will be added inside
+
      var page = $("<div></div>");
      page.append("<h1 class = 'logintitle'>Login page</h1>");
      var username = $("<input type='text' id='loginusername'></input>");
@@ -295,7 +322,7 @@ var textarea = $("<input id='topictitle'>");
 var textsarea = $("<textarea id='forumcontent' rows='5' cols='40' style='resize:none'></textarea><br>");
 var StudenttopicTable = $("<table class='topicsTable' id='myTableID'><tr><th>User</th><th>Content</th><th>Edit</th></tr></table>");
 var Table = $("<table class='topicsTable'><tr><th>Title</th><th>content</th></tr></table>");
-
+var Table1 = $("<table class='topicsTable'><tr><th>Title</th><th>content</th></tr></table>");
 
 var ro = $("<tr></tr>");
 //for benz
@@ -341,34 +368,34 @@ var ro = $("<tr></tr>");
 }
 
 
-
 function Nexttopic(){
    var page = $("<div></div>");
    var PresentButton = $("<button class='button'>Submit</button>");
    page.append("<h1 class='logintitle'>BMW Disscussion Part</h1>");
-   page.append(Table);
+   page.append(Table1);
    var inputone = $("<br><input id='topic'><br>");
-  var inputtwo = $("<textarea id='content' rows='5' cols='40' style='resize:none'></textarea><br>");
+   var inputtwo = $("<textarea id='content' rows='5' cols='40' style='resize:none'></textarea><br>");
    page.append("<p class='bodyfont'>Enter Your Title here: </p>");
    page.append(inputone);
    page.append("<p class='bodyfont'>Enter Your content here: </p>");
    page.append(inputtwo);
    page.append(PresentButton);
-  $("#maincontent").html(page);
+   $("#maincontent").html(page);
 
-  Table.on("click",function(){
-  tableshowup();
-  });
+   Table1.on("click",function(){
+   tableshowup();
+   });
 
 
- PresentButton.on("click",function(){
+   PresentButton.on("click",function(){
 
    var topicinput=document.getElementById("topic").value;
    var contentinput=document.getElementById("content").value;
+   createForum1(topicinput,contentinput);
    var ro = $("<tr></tr>");
    ro.append("<td>" + topicinput + "</td>");
    ro.append("<td>" + contentinput + "</td>");
-   Table.append(ro);
+   Table1.append(ro);
 
    ro.on("click",function(){
    tableshowup();
@@ -394,6 +421,7 @@ function tableshowup(){
   page.append("<p>Enter Your Reply here: </p>");
   page.append(textsarea);
   page.append(Submitbutton);
+
   Submitbutton.on("click",function(){
    add();
 });
@@ -430,10 +458,83 @@ function createsTopicOnclick(node,Studenttopics){
 });
 }
 
+function locktheapp(){
+   document.getElementById('Lock').style.visibility = 'hidden';
+   document.getElementById('loginButton').style.visibility = 'hidden';
+   document.getElementById('registerButton').style.visibility = 'hidden';
+
+
+   var page = $("<div></div>");
+   var passwordLine = $("<p class='bodyfont'><b>Give App a password: </b></p>");
+   var input = $("<input id='lockpassword' type='password'></input>");
+   var button1 = $("<button class='button'>Submit</button>");
+   page.append(passwordLine);
+   passwordLine.append(input);
+   page.append(button1);
+   $("#maincontent").html(page);
+
+   button1.on("click",function(){
+    var lockinput = document.getElementById('lockpassword').value;
+  if(lockinput==""){
+      alert("Cannot Input empty value!");
+  }
+  else {
+      localStorage.setItem('AppLockPassword',lockinput);
+      console.log(lockinput);
+      Unlock();
+  }
+   });
+
+}
+
+function Unlock(){
+
+  document.getElementById('Lock').style.visibility = 'hidden';
+  document.getElementById('loginButton').style.visibility = 'hidden';
+  document.getElementById('registerButton').style.visibility = 'hidden';
+  var page = $("<div></div>");
+  var passwordLine = $("<p class='bodyfont'><b>Use password to Unlock App: </b></p>");
+  var input = $("<input id='inputpassword' type='password'></input>");
+  var button2 = $("<button class='button'>Submit</button>");
+
+  page.append(passwordLine);
+  passwordLine.append(input);
+  page.append(button2);
+
+  button2.on("click",function(){
+   var lockinput1 = document.getElementById('inputpassword').value;
+   if (lockinput1==""){
+       alert("Cannot Input empty value!");
+   }
+   else {
+       var aValue = localStorage.getItem('AppLockPassword');
+       console.log(lockinput1);
+       var aValue = localStorage.getItem('AppLockPassword');
+       console.log(lockinput1);
+
+       if (lockinput1 == aValue){
+         alert("Correct!Welcome to John's Forum");
+         showLoginPage();
+       }else {
+          alert("Wrong password!Try Again!!");
+       }
+
+
+   }
+      });
+
+
+
+  $("#maincontent").html(page);
+
+}
+
+
+
 //web application load
 $( document ).ready(function() {
 $("#loginButton").on("click", showLoginPage);
 $("#registerButton").on("click", showRegisterPage);
-$("#MainPageButton").on("click", showLoginPage);
-showLoginPage();
+$("#Lock").on("click", Unlock);
+locktheapp();
 });

@@ -28,24 +28,22 @@ app.initialize();
 window.baseUrl = "http://introtoapps.com/datastore.php?&appid=2150289066";
 window.currentUsername = null;
 window.forumTopics = [];
+window.forumTopics1 = [];
 window.userData=[];
 
 function checkLogin(){
     var url = baseUrl + "&action=load&objectid=userData";
     var usernameinput = document.getElementById("loginusername").value;
     var passwordinput = document.getElementById("loginpassword").value;
+    localStorage.setItem('Username',usernameinput);
     var hashpasswordinput = CryptoJS.SHA256(passwordinput).toString();
     var userinput = usernameinput + hashpasswordinput;
     console.log(userinput);
-
-
         $.ajax({ url: url, cache: false })
             .done(function (data) {
                 try {
 
                     window.userData = JSON.parse(data);
-
-
                     // do the login fuction firstly retrieve all the data
                     for (var index = 0; index < userData.length; index++) {
                         var networkdata = userData[index];
@@ -59,10 +57,12 @@ function checkLogin(){
                     if (userlogin.indexOf(userinput) >= 0 ){
 
                         alert("You have successfully logged in!");
+                        localStorage.setItem('loginstatus','true');
                         showForumTopics();
                     }
                     else {
                         alert("Username and Password Combination are incorrect! Please try Again!");
+                        localStorage.setItem('loginstatus','false');
                     }
 
                 } catch (e){
@@ -72,7 +72,7 @@ function checkLogin(){
                 alert("Request failed: " + textStatus);
             });
     }
-
+//display the first table data from database
 function displayForumPage() {
     if (localStorage.index == null)
     { localStorage.index = 0; }
@@ -104,8 +104,41 @@ function displayForumPage() {
                  }
              }).fail(function (jqXHR, textStatus) {
                  alert("Request failed: " + textStatus);
-             });
-     }
+             });}
+
+      //display the second table from database
+             function displayForumPage1() {
+                 if (localStorage.index == null)
+                 { localStorage.index = 0; }
+
+                 for (var index = localStorage.index; index < forumTopics1.length; index++) {
+                          var topic = forumTopics1[index];
+                          console.log(topic);
+                          var ro = $("<tr></tr>");
+                          ro.append("<td>" + topic.title + "</td>");
+                          ro.append("<td>" + topic.content + "</td>");
+                          Table1.append(ro);
+
+                 }
+                 localStorage.index = index;
+             }
+
+                  function loadForumTopics1() {
+                      var url = baseUrl + "&action=load&objectid=forumTopics1";
+
+                      $.ajax({ url: url, cache: false })
+                          .done(function (data) {
+                              try {
+                                  alert("Server returned: " + data);
+                                  window.forumTopics = JSON.parse(data);
+                                  console.log(forumTopics);
+                                  displayForumPage1();
+                              } catch (e){
+                                  alert(e);
+                              }
+                          }).fail(function (jqXHR, textStatus) {
+                              alert("Request failed: " + textStatus);
+                          });}
 
 function createUser(_username, _password) {
     var userObject = {
@@ -131,7 +164,7 @@ function createUser(_username, _password) {
 }
 
 
-
+//insert the forum topic into database
 function createForum(_title, _content) {
     //the variable
 
@@ -150,6 +183,33 @@ function createForum(_title, _content) {
                     //when success, run this
                     alert("Result from server:" + data);
                     loadForumTopics();
+
+                }).fail(function (jqXHR, textStatus) {
+                    alert("Request failed: " + textStatus);
+                });
+
+}
+
+//insert the forum topic into database
+function createForum1(_title, _content) {
+    //the variable
+
+    var forumObject = {
+        title: _title,
+        content: _content,
+    }
+    console.log(forumObject);
+
+    forumTopics1.push(forumObject);
+    var data = JSON.stringify(forumTopics1);
+
+    //create url again for saving
+    var url = baseUrl + "&action=save&objectid=forumTopics1&data=" + encodeURIComponent(data);
+     $.ajax({ url: url, cache: false })
+                .done(function (data) {
+                    //when success, run this
+                    alert("Result from server:" + data);
+                    loadForumTopics1();
 
                 }).fail(function (jqXHR, textStatus) {
                     alert("Request failed: " + textStatus);
@@ -267,10 +327,19 @@ function createTopicOnclick(node,topic){
 }
 
 function showForumTopics(){
+  document.getElementById('MainPage').style.visibility = 'hidden';
+  document.getElementById('loginButton').style.visibility = 'hidden';
+  document.getElementById('registerButton').style.visibility = 'hidden';
+  // get the name from localStorage
+  var displayname = localStorage.getItem('Username');
   var page = $("<div></div>");
-  var edituserbutton = $("<br><br><button class='button'>Edit user</button>");
-  page.append("<h1 class='logintitle'>Forum Topics</h1>");
-  page.append(edituserbutton);
+  var nameline = $("<h1 class='logintitle'>Welcome User: </h1><br>");
+  page.append("<h1 class='logintitle'>Forum Topics</h1><br>");
+  page.append(nameline);
+  nameline.append(displayname);
+
+
+
   var topicTable = $("<table class='topicsTable'><tr><th>Title</th><th>Posts</th></tr></table>");
   for (index in topics){
   var row = $("<tr></tr>");
@@ -281,7 +350,6 @@ function showForumTopics(){
 
 }
   page.append(topicTable);
-  page.append(edituserbutton);
  $("#maincontent").html(page);
 }
 
@@ -300,11 +368,12 @@ var textarea = $("<input id='topictitle'>");
 var textsarea = $("<textarea id='forumcontent' rows='5' cols='40' style='resize:none'></textarea><br>");
 var StudenttopicTable = $("<table class='topicsTable' id='myTableID'><tr><th>User</th><th>Content</th><th>Edit</th></tr></table>");
 var Table = $("<table class='topicsTable'><tr><th>Title</th><th>content</th></tr></table>");
-
+var Table1 = $("<table class='topicsTable'><tr><th>Title</th><th>content</th></tr></table>");
 
 var ro = $("<tr></tr>");
 //for benz
  function Alltopic(){
+    document.getElementById('MainPage').style.visibility = 'visible';
     var page = $("<div></div>");
     var PresentButton = $("<button class='button'>Submit</button>");
     page.append("<h1 class='logintitle'>Benz Disscussion Part</h1>");
@@ -347,12 +416,13 @@ var ro = $("<tr></tr>");
 
 
 function Nexttopic(){
+   document.getElementById('MainPage').style.visibility = 'visible';
    var page = $("<div></div>");
    var PresentButton = $("<button class='button'>Submit</button>");
    page.append("<h1 class='logintitle'>BMW Disscussion Part</h1>");
-   page.append(Table);
+   page.append(Table1);
    var inputone = $("<br><input id='topic'><br>");
-   var inputtwo = $("<textarea id='content' rows='5' cols='40' style='resize:none'></textarea><br>");
+   var inputtwo = $("<trix-editor input='content'></trix-editor><br>");
    page.append("<p class='bodyfont'>Enter Your Title here: </p>");
    page.append(inputone);
    page.append("<p class='bodyfont'>Enter Your content here: </p>");
@@ -360,7 +430,7 @@ function Nexttopic(){
    page.append(PresentButton);
    $("#maincontent").html(page);
 
-   Table.on("click",function(){
+   Table1.on("click",function(){
    tableshowup();
    });
 
@@ -368,15 +438,12 @@ function Nexttopic(){
    PresentButton.on("click",function(){
 
    var topicinput=document.getElementById("topic").value;
-   var contentinput=document.getElementById("content").value;
+   var contentinput= document.querySelector("trix-editor").editor.getDocument().toString();
+   //remove the extra "\n" inside of content
+   var newcontentinput = contentinput.replace(/\n/g,"");
+   createForum1(topicinput,newcontentinput);
    var ro = $("<tr></tr>");
-   ro.append("<td>" + topicinput + "</td>");
-   ro.append("<td>" + contentinput + "</td>");
-   Table.append(ro);
 
-   ro.on("click",function(){
-   tableshowup();
-   });
 
 });
 
@@ -398,6 +465,7 @@ function tableshowup(){
   page.append("<p>Enter Your Reply here: </p>");
   page.append(textsarea);
   page.append(Submitbutton);
+
   Submitbutton.on("click",function(){
    add();
 });
@@ -435,9 +503,11 @@ function createsTopicOnclick(node,Studenttopics){
 }
 
 function locktheapp(){
+   //hide the upper menu button
    document.getElementById('Lock').style.visibility = 'hidden';
    document.getElementById('loginButton').style.visibility = 'hidden';
    document.getElementById('registerButton').style.visibility = 'hidden';
+   document.getElementById('MainPage').style.visibility = 'hidden';
 
 
    var page = $("<div></div>");
@@ -463,11 +533,15 @@ function locktheapp(){
 
 }
 
-function Unlock(){
 
+function Unlock(){
+  //hidden the button
   document.getElementById('Lock').style.visibility = 'hidden';
   document.getElementById('loginButton').style.visibility = 'hidden';
   document.getElementById('registerButton').style.visibility = 'hidden';
+  document.getElementById('MainPage').style.visibility = 'hidden';
+
+
   var page = $("<div></div>");
   var passwordLine = $("<p class='bodyfont'><b>Use password to Unlock App: </b></p>");
   var input = $("<input id='inputpassword' type='password'></input>");
@@ -483,8 +557,6 @@ function Unlock(){
        alert("Cannot Input empty value!");
    }
    else {
-       var aValue = localStorage.getItem('AppLockPassword');
-       console.log(lockinput1);
        var aValue = localStorage.getItem('AppLockPassword');
        console.log(lockinput1);
 
@@ -506,10 +578,12 @@ function Unlock(){
 }
 
 
+
 //web application load
 $( document ).ready(function() {
 $("#loginButton").on("click", showLoginPage);
 $("#registerButton").on("click", showRegisterPage);
 $("#Lock").on("click", Unlock);
+$("#MainPage").on("click", showForumTopics);
 locktheapp();
 });
